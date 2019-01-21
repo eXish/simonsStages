@@ -377,7 +377,7 @@ public class SimonForgetsScript : MonoBehaviour
     {
         absoluteLevelPosition.Add(0);
         moduleCount = Bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-        //moduleCount = 5;
+        //moduleCount = 11;
         indicatorText.text = "";
         moduleLocked = true;
         foreach(LightInformation device in lightDevices)
@@ -564,12 +564,12 @@ public class SimonForgetsScript : MonoBehaviour
                 {
                     completeLights.Add(clearLights[i]);
                 }
-                clearLights.Clear();
             }
             else
             {
                 ReCompileLists();
             }
+            clearLights.Clear();
             Debug.LogFormat("[Simon's Stages #{0}] END OF STAGE {1}. You {2} this stage.", moduleId, absoluteLevelPosition[increaser] + 1, result);
             increaser++;
             if(totalPresses < solutionNames.Count)
