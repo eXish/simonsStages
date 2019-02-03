@@ -1,11 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using KModkit;
 
-public class SimonForgetsScript : MonoBehaviour
+public class SimonsStagesScript : MonoBehaviour
 {
     public KMBombInfo Bomb;
     public KMAudio Audio;
@@ -14,8 +12,8 @@ public class SimonForgetsScript : MonoBehaviour
     public TextMesh indicatorText;
     public Color[] lightDeviceColorOptions;
     public Material[] lightBaseOptions;
-    public String[] lightTextOptions;
-    public String[] lightNameOptions;
+    public string[] lightTextOptions;
+    public string[] lightNameOptions;
     public AudioClip[] sfxOptions;
     private List<int> chosenIndices = new List<int>();
     private List<int> chosenIndices2 = new List<int>();
@@ -100,22 +98,22 @@ public class SimonForgetsScript : MonoBehaviour
 
     void Update()
     {
-        if(!moduleLocked && !moduleSolved && gameOn && !readyToSolve && !secondAttempt)
+        if (!moduleLocked && !moduleSolved && gameOn && !readyToSolve && !secondAttempt)
         {
-            if(moduleCount == 0 && !moduleSolved)
+            if (moduleCount == 0 && !moduleSolved)
             {
                 moduleSolved = true;
                 GetComponent<KMBombModule>().HandlePass();
                 Debug.LogFormat("[Simon's Stages #{0}] There are no solveable modules on the bomb. Module disarmed.", moduleId);
                 StartCoroutine(SolveLights());
             }
-            else if(solvedModules != moduleCount)
+            else if (solvedModules != moduleCount)
             {
                 tempSolvedModules = solvedModules;
                 solvedModules = Bomb.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-                if(tempSolvedModules != solvedModules)
+                if (tempSolvedModules != solvedModules)
                 {
-                    if(solvedModules != moduleCount)
+                    if (solvedModules != moduleCount)
                     {
                         GenerateSequence();
                     }
@@ -128,18 +126,18 @@ public class SimonForgetsScript : MonoBehaviour
                 indicatorText.text = "";
                 Audio.PlaySoundAtTransform("scaryRiff", transform);
                 Debug.LogFormat("[Simon's Stages #{0}] There are no more solveable modules on the bomb. The module is ready to solve.", moduleId);
-                if(sequences.Count != 0)
+                if (sequences.Count != 0)
                 {
                     Debug.LogFormat("[Simon's Stages #{0}] STAGE 1 RESPONSE:", moduleId);
                 }
                 readyToSolve = true;
-                for(int i = 0; i <= 9; i++)
+                for (int i = 0; i <= 9; i++)
                 {
                     lightDevices[i].ledGlow.enabled = false;
                     lightDevices[i].greyBase.enabled = true;
                     indicatorLights[i].glow.enabled = false;
                 }
-                if(solutionNames.Count == 0)
+                if (solutionNames.Count == 0)
                 {
                     moduleSolved = true;
                     GetComponent<KMBombModule>().HandlePass();
@@ -161,18 +159,18 @@ public class SimonForgetsScript : MonoBehaviour
         currentSequenceNames.Clear();
         stagesSolved.Add(false);
         startLocation.Add(lastStartPosition);
-        int sequenceLength = UnityEngine.Random.Range(3,6);
+        int sequenceLength = Random.Range(3, 6);
         sequenceLengths.Add(sequenceLength);
-        for(int i = 0; i < sequenceLength; i++)
+        for (int i = 0; i < sequenceLength; i++)
         {
-            int sequenceColour = UnityEngine.Random.Range(0,10);
+            int sequenceColour = Random.Range(0, 10);
             sequences.Add(sequenceColour);
             currentSequence.Add(sequenceColour);
             currentSequenceNames.Add(lightDevices[sequenceColour].colorName);
         }
         currentLevel++;
         counterText.text = currentLevel.ToString("00");
-        indicator = UnityEngine.Random.Range(0,10);
+        indicator = Random.Range(0, 10);
         indicatorColour.Add(indicator);
         lastStartPosition = sequenceLength + startLocation[currentLevel - 1];
         Debug.LogFormat("[Simon's Stages #{0}] STAGE #{1}:", moduleId, currentLevel);
@@ -183,79 +181,79 @@ public class SimonForgetsScript : MonoBehaviour
 
     void CalculateSolution()
     {
-        if(indicatorLights[indicator].colorName == "red")
+        if (indicatorLights[indicator].colorName == "red")
         {
-            for(int i = 0; i < currentSequence.Count; i++)
+            for (int i = 0; i < currentSequence.Count; i++)
             {
                 solutionNames.Add(lightDevices[currentSequence[i]].colorName);
                 currentSolution.Add(currentSequence[i]);
                 currentSolutionNames.Add(lightDevices[currentSequence[i]].colorName);
             }
         }
-        else if(indicatorLights[indicator].colorName == "blue")
+        else if (indicatorLights[indicator].colorName == "blue")
         {
-            for(int i = currentSequence.Count - 1; i >= 0; i--)
+            for (int i = currentSequence.Count - 1; i >= 0; i--)
             {
                 solutionNames.Add(lightDevices[currentSequence[i]].colorName);
                 currentSolution.Add(currentSequence[i]);
                 currentSolutionNames.Add(lightDevices[currentSequence[i]].colorName);
             }
         }
-        else if(indicatorLights[indicator].colorName == "yellow")
+        else if (indicatorLights[indicator].colorName == "yellow")
         {
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 solutionNames.Add(lightDevices[currentSequence[i]].colorName);
                 currentSolution.Add(currentSequence[i]);
                 currentSolutionNames.Add(lightDevices[currentSequence[i]].colorName);
             }
         }
-        else if(indicatorLights[indicator].colorName == "orange")
+        else if (indicatorLights[indicator].colorName == "orange")
         {
-            for(int i = 1; i >= 0; i--)
+            for (int i = 1; i >= 0; i--)
             {
                 solutionNames.Add(lightDevices[currentSequence[i]].colorName);
                 currentSolution.Add(currentSequence[i]);
                 currentSolutionNames.Add(lightDevices[currentSequence[i]].colorName);
             }
         }
-        else if(indicatorLights[indicator].colorName == "magenta")
+        else if (indicatorLights[indicator].colorName == "magenta")
         {
-            for(int i = currentSequence.Count - 2; i < currentSequence.Count; i++)
+            for (int i = currentSequence.Count - 2; i < currentSequence.Count; i++)
             {
                 solutionNames.Add(lightDevices[currentSequence[i]].colorName);
                 currentSolution.Add(currentSequence[i]);
                 currentSolutionNames.Add(lightDevices[currentSequence[i]].colorName);
             }
         }
-        else if(indicatorLights[indicator].colorName == "green")
+        else if (indicatorLights[indicator].colorName == "green")
         {
-            for(int i = currentSequence.Count - 1; i >= (currentSequence.Count - 2); i--)
+            for (int i = currentSequence.Count - 1; i >= (currentSequence.Count - 2); i--)
             {
                 solutionNames.Add(lightDevices[currentSequence[i]].colorName);
                 currentSolution.Add(currentSequence[i]);
                 currentSolutionNames.Add(lightDevices[currentSequence[i]].colorName);
             }
         }
-        else if(indicatorLights[indicator].colorName == "pink")
+        else if (indicatorLights[indicator].colorName == "pink")
         {
-            for(int i = 0; i < currentSequence.Count; i++)
+            for (int i = 0; i < currentSequence.Count; i++)
             {
                 solutionNames.Add(lightDevices[(5 + currentSequence[i]) % 10].colorName);
                 currentSolution.Add(lightDevices[(5 + currentSequence[i]) % 10].colorIndex);
                 currentSolutionNames.Add(lightDevices[(5 + currentSequence[i]) % 10].colorName);
             }
         }
-        else if(indicatorLights[indicator].colorName == "lime")
+        else if (indicatorLights[indicator].colorName == "lime")
         {
-            for(int i = currentSequence.Count - 1; i >= 0; i--)
+            for (int i = currentSequence.Count - 1; i >= 0; i--)
             {
                 solutionNames.Add(lightDevices[(5 + currentSequence[i]) % 10].colorName);
                 currentSolution.Add(lightDevices[(5 + currentSequence[i]) % 10].colorIndex);
                 currentSolutionNames.Add(lightDevices[(5 + currentSequence[i]) % 10].colorName);
             }
         }
-        else if(indicatorLights[indicator].colorName == "cyan")
+        else if (indicatorLights[indicator].colorName == "cyan")
         {
             int last = currentSequence.Count - 1;
             solutionNames.Add(lightDevices[(5 + currentSequence[0]) % 10].colorName);
@@ -265,7 +263,7 @@ public class SimonForgetsScript : MonoBehaviour
             currentSolutionNames.Add(lightDevices[(5 + currentSequence[0]) % 10].colorName);
             currentSolutionNames.Add(lightDevices[(5 + currentSequence[last]) % 10].colorName);
         }
-        else if(indicatorLights[indicator].colorName == "white")
+        else if (indicatorLights[indicator].colorName == "white")
         {
             solutionNames.Add(lightDevices[(5 + currentSequence[2]) % 10].colorName);
             solutionNames.Add(lightDevices[(5 + currentSequence[1]) % 10].colorName);
@@ -277,7 +275,7 @@ public class SimonForgetsScript : MonoBehaviour
         solutionStartLocation.Add(lastSolutionLocation);
         lastSolutionLocation = currentSolutionNames.Count + lastSolutionLocation;
         solveLengths.Add(currentSolution.Count);
-        for(int i = 0; i < currentSolution.Count; i++)
+        for (int i = 0; i < currentSolution.Count; i++)
         {
             lightsSolved.Add(false);
         }
@@ -289,11 +287,11 @@ public class SimonForgetsScript : MonoBehaviour
 
     void DisplaySequence()
     {
-        foreach(IndicatorInformation indic in indicatorLights)
+        foreach (IndicatorInformation indic in indicatorLights)
         {
             indic.glow.enabled = false;
         }
-        indicatorLights[indicatorColour[currentLevel-1]].glow.enabled = true;
+        indicatorLights[indicatorColour[currentLevel - 1]].glow.enabled = true;
         indicatorText.text = lightTextOptions[indicatorLights[indicatorColour[currentLevel - 1]].colorIndex];
         indicatorLetter.Add(indicatorText.text);
         StartCoroutine(PlaySequence());
@@ -303,43 +301,43 @@ public class SimonForgetsScript : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         bool first = true;
-        foreach(LightInformation device in lightDevices)
+        foreach (LightInformation device in lightDevices)
         {
             device.ledGlow.enabled = false;
             device.greyBase.enabled = true;
         }
 
         int current = currentLevel;
-        while(current == currentLevel)
+        while (current == currentLevel)
         {
             yield return new WaitForSeconds(0.1f);
-            for(int i = 0; i < currentSequence.Count; i++)
+            for (int i = 0; i < currentSequence.Count; i++)
             {
-                if(current != currentLevel || readyToSolve)
+                if (current != currentLevel || readyToSolve)
                 {
                     break;
                 }
-                if(first)
+                if (first)
                 {
                     Audio.PlaySoundAtTransform(lightDevices[currentSequence[i]].connectedSound.name, transform);
                 }
                 lightDevices[currentSequence[i]].ledGlow.enabled = true;
                 lightDevices[currentSequence[i]].greyBase.enabled = false;
                 yield return new WaitForSeconds(0.5f);
-                if(current != currentLevel || readyToSolve)
+                if (current != currentLevel || readyToSolve)
                 {
                     break;
                 }
                 lightDevices[currentSequence[i]].ledGlow.enabled = false;
                 lightDevices[currentSequence[i]].greyBase.enabled = true;
-                if(current != currentLevel || readyToSolve)
+                if (current != currentLevel || readyToSolve)
                 {
                     break;
                 }
                 yield return new WaitForSeconds(0.25f);
             }
             first = false;
-            foreach(LightInformation device in lightDevices)
+            foreach (LightInformation device in lightDevices)
             {
                 device.ledGlow.enabled = false;
                 device.greyBase.enabled = true;
@@ -350,24 +348,24 @@ public class SimonForgetsScript : MonoBehaviour
 
     IEnumerator IndicatorBlink()
     {
-        while(!moduleSolved)
+        while (!moduleSolved)
         {
-            foreach(IndicatorInformation indic in indicatorLights)
+            foreach (IndicatorInformation indic in indicatorLights)
             {
                 indic.glow.enabled = true;
             }
             yield return new WaitForSeconds(1.2f);
-            if(moduleSolved || secondAttempt)
+            if (moduleSolved || secondAttempt)
             {
                 break;
             }
-            foreach(IndicatorInformation indic in indicatorLights)
+            foreach (IndicatorInformation indic in indicatorLights)
             {
                 indic.glow.enabled = false;
             }
             yield return new WaitForSeconds(1.2f);
         }
-        foreach(IndicatorInformation indic in indicatorLights)
+        foreach (IndicatorInformation indic in indicatorLights)
         {
             indic.glow.enabled = false;
         }
@@ -380,19 +378,19 @@ public class SimonForgetsScript : MonoBehaviour
         //moduleCount = 11;
         indicatorText.text = "";
         moduleLocked = true;
-        foreach(LightInformation device in lightDevices)
+        foreach (LightInformation device in lightDevices)
         {
-            device.colorIndex = UnityEngine.Random.Range(0,10);
-            while(chosenIndices.Contains(device.colorIndex))
+            device.colorIndex = Random.Range(0, 10);
+            while (chosenIndices.Contains(device.colorIndex))
             {
-                device.colorIndex = UnityEngine.Random.Range(0,10);
+                device.colorIndex = Random.Range(0, 10);
             }
             chosenIndices.Add(device.colorIndex);
 
-            device.soundIndex = UnityEngine.Random.Range(0,10);
-            while(chosenIndices2.Contains(device.soundIndex))
+            device.soundIndex = Random.Range(0, 10);
+            while (chosenIndices2.Contains(device.soundIndex))
             {
-                device.soundIndex = UnityEngine.Random.Range(0,10);
+                device.soundIndex = Random.Range(0, 10);
             }
             chosenIndices2.Add(device.soundIndex);
 
@@ -405,15 +403,20 @@ public class SimonForgetsScript : MonoBehaviour
             device.connectedSound = sfxOptions[device.soundIndex];
             device.ledGlow.enabled = false;
         }
+
+        Debug.LogFormat("[Simon's Stages #{0}] The arrangement of colors is: {1} // {2}", moduleId,
+            string.Join(", ", lightDevices.Take(5).Select(ld => ld.colorName).ToArray()),
+            string.Join(", ", lightDevices.Skip(5).Select(ld => ld.colorName).ToArray()));
+
         chosenIndices.Clear();
         chosenIndices2.Clear();
 
-        foreach(IndicatorInformation indic in indicatorLights)
+        foreach (IndicatorInformation indic in indicatorLights)
         {
-            indic.colorIndex = UnityEngine.Random.Range(0,10);
-            while(chosenIndices.Contains(indic.colorIndex))
+            indic.colorIndex = Random.Range(0, 10);
+            while (chosenIndices.Contains(indic.colorIndex))
             {
-                indic.colorIndex = UnityEngine.Random.Range(0,10);
+                indic.colorIndex = Random.Range(0, 10);
             }
             chosenIndices.Add(indic.colorIndex);
 
@@ -432,38 +435,38 @@ public class SimonForgetsScript : MonoBehaviour
         Audio.PlaySoundAtTransform("scaryRiff", transform);
         int index = 0;
         int iterations = 0;
-        while(moduleLocked && iterations < 2)
+        while (moduleLocked && iterations < 2)
         {
-            currentLevel = UnityEngine.Random.Range(0,100);
+            currentLevel = Random.Range(0, 100);
             counterText.text = currentLevel.ToString("00");
             lightDevices[index].greyBase.enabled = false;
             lightDevices[index].ledGlow.enabled = true;
             indicatorLights[index].glow.enabled = true;
             indicatorText.text = lightTextOptions[indicatorLights[index].colorIndex];
             yield return new WaitForSeconds(0.05f);
-            currentLevel = UnityEngine.Random.Range(0,100);
+            currentLevel = Random.Range(0, 100);
             counterText.text = currentLevel.ToString("00");
             lightDevices[index].greyBase.enabled = true;
             lightDevices[index].ledGlow.enabled = false;
             indicatorLights[index].glow.enabled = false;
             yield return new WaitForSeconds(0.025f);
-            if(index < 10 && !reverse)
+            if (index < 10 && !reverse)
             {
                 index++;
             }
-            if(index == 10)
+            if (index == 10)
             {
                 reverse = true;
                 index = 9;
             }
 
-            if(index >= 0 && reverse)
+            if (index >= 0 && reverse)
             {
                 index--;
             }
-            if(index < 0 && reverse)
+            if (index < 0 && reverse)
             {
-                if(iterations == 1)
+                if (iterations == 1)
                 {
                     moduleLocked = false;
                 }
@@ -475,28 +478,28 @@ public class SimonForgetsScript : MonoBehaviour
         indicatorText.text = "";
         moduleLocked = true;
         int counter = 0;
-        while(moduleLocked)
+        while (moduleLocked)
         {
-            for(int i = 0; i <= 9; i++)
+            for (int i = 0; i <= 9; i++)
             {
                 lightDevices[i].greyBase.enabled = false;
                 lightDevices[i].ledGlow.enabled = true;
                 indicatorLights[i].glow.enabled = true;
-                currentLevel = UnityEngine.Random.Range(0,100);
+                currentLevel = Random.Range(0, 100);
                 counterText.text = currentLevel.ToString("00");
             }
             yield return new WaitForSeconds(0.05f);
-            for(int i = 0; i <= 9; i++)
+            for (int i = 0; i <= 9; i++)
             {
                 lightDevices[i].greyBase.enabled = true;
                 lightDevices[i].ledGlow.enabled = false;
                 indicatorLights[i].glow.enabled = false;
-                currentLevel = UnityEngine.Random.Range(0,100);
+                currentLevel = Random.Range(0, 100);
                 counterText.text = currentLevel.ToString("00");
             }
             yield return new WaitForSeconds(0.05f);
             counter++;
-            if(counter == 30)
+            if (counter == 30)
             {
                 moduleLocked = false;
                 currentLevel = 0;
@@ -508,11 +511,11 @@ public class SimonForgetsScript : MonoBehaviour
 
     public void ButtonPress(LightInformation device)
     {
-        if(moduleSolved || moduleLocked || !gameOn || checking)
+        if (moduleSolved || moduleLocked || !gameOn || checking)
         {
             return;
         }
-        else if(!readyToSolve)
+        else if (!readyToSolve)
         {
             device.connectedButton.AddInteractionPunch();
             GetComponent<KMBombModule>().HandleStrike();
@@ -520,7 +523,7 @@ public class SimonForgetsScript : MonoBehaviour
             return;
         }
         moduleLocked = true;
-        if(secondAttemptLock)
+        if (secondAttemptLock)
         {
             secondAttemptLock = false;
         }
@@ -528,7 +531,7 @@ public class SimonForgetsScript : MonoBehaviour
         Audio.PlaySoundAtTransform(device.connectedSound.name, transform);
         StartCoroutine(PressFlash(device));
 
-        if(device.colorName == solutionNames[totalPresses])
+        if (device.colorName == solutionNames[totalPresses])
         {
             lightsSolved[totalPresses] = true;
             clearLights.Add(totalPresses);
@@ -541,13 +544,13 @@ public class SimonForgetsScript : MonoBehaviour
         }
         stagePresses++;
         totalPresses++;
-        if(stagePresses == solveLengths[increaser])
+        if (stagePresses == solveLengths[increaser])
         {
             device.connectedButton.AddInteractionPunch();
             stagePresses = 0;
-            for(int i = solutionStartLocation[increaser]; i <= solutionStartLocation[increaser] + solveLengths[increaser] - 1; i++)
+            for (int i = solutionStartLocation[increaser]; i <= solutionStartLocation[increaser] + solveLengths[increaser] - 1; i++)
             {
-                if(!lightsSolved[i])
+                if (!lightsSolved[i])
                 {
                     stagesSolved[increaser] = false;
                     break;
@@ -557,10 +560,10 @@ public class SimonForgetsScript : MonoBehaviour
                     stagesSolved[increaser] = true;
                 }
             }
-            if(stagesSolved[increaser])
+            if (stagesSolved[increaser])
             {
                 result = "passed";
-                for(int i = 0; i < clearLights.Count; i++)
+                for (int i = 0; i < clearLights.Count; i++)
                 {
                     completeLights.Add(clearLights[i]);
                 }
@@ -572,7 +575,7 @@ public class SimonForgetsScript : MonoBehaviour
             clearLights.Clear();
             Debug.LogFormat("[Simon's Stages #{0}] END OF STAGE {1}. You {2} this stage.", moduleId, absoluteLevelPosition[increaser] + 1, result);
             increaser++;
-            if(totalPresses < solutionNames.Count)
+            if (totalPresses < solutionNames.Count)
             {
                 Debug.LogFormat("[Simon's Stages #{0}] STAGE {1} RESPONSE:", moduleId, absoluteLevelPosition[increaser] + 1, result);
             }
@@ -582,7 +585,7 @@ public class SimonForgetsScript : MonoBehaviour
             device.connectedButton.AddInteractionPunch(0.25f);
         }
 
-        if(totalPresses >= solutionNames.Count)
+        if (totalPresses >= solutionNames.Count)
         {
             moduleLocked = true;
             checking = true;
@@ -595,7 +598,7 @@ public class SimonForgetsScript : MonoBehaviour
         result = "did not pass";
         incorrectSolveLengths.Add(solveLengths[increaser]);
         incorrectSequenceLength.Add(sequenceLengths[increaser]);
-        if(incorrectSequenceStartLocation.Count == 0)
+        if (incorrectSequenceStartLocation.Count == 0)
         {
             incorrectSequenceStartLocation.Add(0);
         }
@@ -603,17 +606,17 @@ public class SimonForgetsScript : MonoBehaviour
         {
             incorrectSequenceStartLocation.Add(incorrectSequenceStartLocation.Last() + sequenceLengths[tempCurrent.Last()]);
         }
-        for(int i = 0; i < sequenceLengths[increaser]; i++)
+        for (int i = 0; i < sequenceLengths[increaser]; i++)
         {
             repeatedSequence.Add(sequences[startLocation[increaser] + i]);
         }
         incorrectIndicatorLights.Add(indicatorColour[increaser]);
         incorrectIndicatorLetter.Add(indicatorLetter[increaser]);
-        for(int i = 0; i < solveLengths[increaser]; i++)
+        for (int i = 0; i < solveLengths[increaser]; i++)
         {
             tempCorrectSolution.Add(solutionNames[solutionStartLocation[increaser] + i]);
         }
-        if(incorrectSolutionStartLocation.Count == 0)
+        if (incorrectSolutionStartLocation.Count == 0)
         {
             incorrectSolutionStartLocation.Add(0);
         }
@@ -627,9 +630,9 @@ public class SimonForgetsScript : MonoBehaviour
     }
     void CheckEndGame()
     {
-        for(int i = 0; i < stagesSolved.Count; i++)
+        for (int i = 0; i < stagesSolved.Count; i++)
         {
-            if(!stagesSolved[i])
+            if (!stagesSolved[i])
             {
                 secondAttempt = true;
                 break;
@@ -641,15 +644,15 @@ public class SimonForgetsScript : MonoBehaviour
         }
 
         int endGameCheck = stagesSolved.Count;
-        if(endGameCheck == 1)
+        if (endGameCheck == 1)
         {
-            if(stagesSolved[0])
+            if (stagesSolved[0])
             {
                 secondAttempt = false;
             }
         }
 
-        if(!secondAttempt)
+        if (!secondAttempt)
         {
             GetComponent<KMBombModule>().HandlePass();
             Debug.LogFormat("[Simon's Stages #{0}] Inputs correct. Module disarmed.", moduleId);
@@ -665,32 +668,32 @@ public class SimonForgetsScript : MonoBehaviour
             stageIncreaser = 0;
 
             absoluteLevelPosition.Clear();
-            for(int i = 0; i < tempAbsolute.Count; i++)
+            for (int i = 0; i < tempAbsolute.Count; i++)
             {
                 absoluteLevelPosition.Add(tempAbsolute[i]);
             }
             tempAbsolute.Clear();
 
-            for(int i = completeLights.Count -1; i >= 0; i--)
+            for (int i = completeLights.Count - 1; i >= 0; i--)
             {
                 lightsSolved.RemoveAt(completeLights[i]);
             }
             completeLights.Clear();
 
-            for(int i = lightsSolved.Count -1; i >= 0; i--)
+            for (int i = lightsSolved.Count - 1; i >= 0; i--)
             {
                 lightsSolved[i] = false;
             }
-            for(int i = stagesSolved.Count -1; i >= 0; i--)
+            for (int i = stagesSolved.Count - 1; i >= 0; i--)
             {
-                if(stagesSolved[i])
+                if (stagesSolved[i])
                 {
                     stagesSolved.RemoveAt(i);
                 }
             }
 
             startLocation.Clear();
-            for(int i = 0; i < incorrectSequenceStartLocation.Count; i++)
+            for (int i = 0; i < incorrectSequenceStartLocation.Count; i++)
             {
                 startLocation.Add(incorrectSequenceStartLocation[i]);
             }
@@ -699,54 +702,54 @@ public class SimonForgetsScript : MonoBehaviour
             tempCurrent.Clear();
 
             sequenceLengths.Clear();
-            for(int i = 0; i < incorrectSequenceLength.Count; i++)
+            for (int i = 0; i < incorrectSequenceLength.Count; i++)
             {
                 sequenceLengths.Add(incorrectSequenceLength[i]);
             }
             incorrectSequenceLength.Clear();
 
             solveLengths.Clear();
-            for(int i = 0; i < incorrectSolveLengths.Count; i ++)
+            for (int i = 0; i < incorrectSolveLengths.Count; i++)
             {
                 solveLengths.Add(incorrectSolveLengths[i]);
             }
             incorrectSolveLengths.Clear();
 
             solutionNames.Clear();
-            for(int i = 0; i < tempCorrectSolution.Count; i++)
+            for (int i = 0; i < tempCorrectSolution.Count; i++)
             {
                 solutionNames.Add(tempCorrectSolution[i]);
             }
             tempCorrectSolution.Clear();
 
             solutionStartLocation.Clear();
-            for(int i = 0; i < incorrectSolutionStartLocation.Count; i++)
+            for (int i = 0; i < incorrectSolutionStartLocation.Count; i++)
             {
                 solutionStartLocation.Add(incorrectSolutionStartLocation[i]);
             }
             incorrectSolutionStartLocation.Clear();
 
             indicatorLetter.Clear();
-            for(int i = 0; i < incorrectIndicatorLetter.Count; i ++)
+            for (int i = 0; i < incorrectIndicatorLetter.Count; i++)
             {
                 indicatorLetter.Add(incorrectIndicatorLetter[i]);
             }
             incorrectIndicatorLetter.Clear();
 
             indicatorColour.Clear();
-            for(int i = 0; i < incorrectIndicatorLights.Count; i++)
+            for (int i = 0; i < incorrectIndicatorLights.Count; i++)
             {
                 indicatorColour.Add(incorrectIndicatorLights[i]);
             }
             incorrectIndicatorLights.Clear();
 
             sequences.Clear();
-            for(int i = 0; i < repeatedSequence.Count; i ++)
+            for (int i = 0; i < repeatedSequence.Count; i++)
             {
                 sequences.Add(repeatedSequence[i]);
             }
             repeatedSequence.Clear();
-            Debug.LogFormat("[Simon's Stages #{0}] Strike! Your sequence was incorrect. Please re-input stage(s) {1}.", moduleId, string.Join(", ", absoluteLevelPosition.Select((x) => (x+1).ToString()).ToArray()));
+            Debug.LogFormat("[Simon's Stages #{0}] Strike! Your sequence was incorrect. Please re-input stage(s) {1}.", moduleId, string.Join(", ", absoluteLevelPosition.Select((x) => (x + 1).ToString()).ToArray()));
             GetComponent<KMBombModule>().HandleStrike();
             Debug.LogFormat("[Simon's Stages #{0}] STAGE {1} RESPONSE:", moduleId, absoluteLevelPosition[0] + 1, result);
             StartCoroutine(RepeatSequence());
@@ -756,44 +759,44 @@ public class SimonForgetsScript : MonoBehaviour
     IEnumerator RepeatSequence()
     {
         yield return new WaitForSeconds(2f);
-        foreach(LightInformation device in lightDevices)
+        foreach (LightInformation device in lightDevices)
         {
             device.ledGlow.enabled = false;
             device.greyBase.enabled = true;
         }
-        while(secondAttemptLock)
+        while (secondAttemptLock)
         {
             int j = 0;
             int k = 0;
-            for(int i = 0; i < sequences.Count; i++)
+            for (int i = 0; i < sequences.Count; i++)
             {
                 counterText.text = (absoluteLevelPosition[j] + 1).ToString("00");
                 indicatorText.text = indicatorLetter[j];
                 indicatorLights[indicatorColour[j]].glow.enabled = true;
                 Audio.PlaySoundAtTransform(lightDevices[sequences[i]].connectedSound.name, transform);
-                if(!secondAttemptLock)
+                if (!secondAttemptLock)
                 {
                     break;
                 }
                 lightDevices[sequences[i]].ledGlow.enabled = true;
                 lightDevices[sequences[i]].greyBase.enabled = false;
                 yield return new WaitForSeconds(0.5f);
-                if(!secondAttemptLock)
+                if (!secondAttemptLock)
                 {
                     break;
                 }
                 lightDevices[sequences[i]].ledGlow.enabled = false;
                 lightDevices[sequences[i]].greyBase.enabled = true;
-                if(!secondAttemptLock)
+                if (!secondAttemptLock)
                 {
                     break;
                 }
                 yield return new WaitForSeconds(0.25f);
-                if(sequenceLengths[j] - 1 == k)
+                if (sequenceLengths[j] - 1 == k)
                 {
                     j++;
                     k = 0;
-                    foreach(IndicatorInformation indic in indicatorLights)
+                    foreach (IndicatorInformation indic in indicatorLights)
                     {
                         indic.glow.enabled = false;
                     }
@@ -803,7 +806,7 @@ public class SimonForgetsScript : MonoBehaviour
                     k++;
                 }
             }
-            foreach(LightInformation device in lightDevices)
+            foreach (LightInformation device in lightDevices)
             {
                 device.ledGlow.enabled = false;
                 device.greyBase.enabled = true;
@@ -811,14 +814,14 @@ public class SimonForgetsScript : MonoBehaviour
             counterText.text = "";
             indicatorText.text = "";
             j = 0;
-            foreach(IndicatorInformation indic in indicatorLights)
+            foreach (IndicatorInformation indic in indicatorLights)
             {
                 indic.glow.enabled = false;
             }
             moduleLocked = false;
             checking = false;
             yield return new WaitForSeconds(5f);
-            if(secondAttemptLock)
+            if (secondAttemptLock)
             {
                 moduleLocked = true;
             }
@@ -839,10 +842,10 @@ public class SimonForgetsScript : MonoBehaviour
     {
         Audio.PlaySoundAtTransform("solveRiff", transform);
         int solveCounter = 0;
-        while(solveCounter < 2)
+        while (solveCounter < 2)
         {
             yield return new WaitForSeconds(1f);
-            for(int i = 0; i <= 9; i++)
+            for (int i = 0; i <= 9; i++)
             {
                 lightDevices[i].greyBase.enabled = false;
                 lightDevices[i].ledGlow.enabled = true;
@@ -850,7 +853,7 @@ public class SimonForgetsScript : MonoBehaviour
                 counterText.text = "";
             }
             yield return new WaitForSeconds(1f);
-            for(int i = 0; i <= 9; i++)
+            for (int i = 0; i <= 9; i++)
             {
                 lightDevices[i].greyBase.enabled = true;
                 lightDevices[i].ledGlow.enabled = false;
@@ -860,7 +863,7 @@ public class SimonForgetsScript : MonoBehaviour
             solveCounter++;
         }
         yield return new WaitForSeconds(1f);
-        for(int i = 0; i <= 9; i++)
+        for (int i = 0; i <= 9; i++)
         {
             lightDevices[i].greyBase.enabled = false;
             lightDevices[i].ledGlow.enabled = true;
