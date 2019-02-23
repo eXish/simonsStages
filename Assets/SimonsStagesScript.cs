@@ -30,6 +30,7 @@ public class SimonsStagesScript : MonoBehaviour
        "Souvenir",          //Similar situation to TTK, stalls the bomb.
        "The Time Keeper",   //Again, similar to TTK.
        "The Swan",   //Again, similar to TTK.
+       "Forget This", //Mandatory to prevent potentially unsolvable bombs.
      };
 
     public int moduleCount = 0;
