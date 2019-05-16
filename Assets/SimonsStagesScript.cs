@@ -7,6 +7,9 @@ public class SimonsStagesScript : MonoBehaviour
 {
     public KMBombInfo Bomb;
     public KMAudio Audio;
+    public KMBossModule BossModule;
+    public KMBombModule Module;
+
     public LightInformation[] lightDevices;
     public IndicatorInformation[] indicatorLights;
     public TextMesh indicatorText;
@@ -21,7 +24,7 @@ public class SimonsStagesScript : MonoBehaviour
     public TextMesh counterText;
     public int currentLevel = 0;
 
-    public static readonly string[] ignoredModules =
+    public static readonly string[] defaultIgnoredModules =
     {
        "Simon's Stages",   //Mandatory to prevent unsolvable bombs.
        "Forget Me Not",     //Mandatory to prevent unsolvable bombs.
@@ -32,6 +35,7 @@ public class SimonsStagesScript : MonoBehaviour
        "The Swan",   //Again, similar to TTK.
        "Forget This", //Mandatory to prevent potentially unsolvable bombs.
      };
+    public string[] ignoredModules;
 
     public int moduleCount = 0;
     public int solvedModules = 0;
@@ -90,6 +94,7 @@ public class SimonsStagesScript : MonoBehaviour
     void Awake()
     {
         moduleId = moduleIdCounter++;
+        ignoredModules = BossModule.GetIgnoredModules(Module, defaultIgnoredModules);
         foreach (LightInformation button in lightDevices)
         {
             LightInformation pressedButton = button;
