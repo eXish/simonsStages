@@ -107,6 +107,7 @@ public class SimonsStagesScript : MonoBehaviour
     {
         if (!moduleLocked && !moduleSolved && gameOn && !readyToSolve && !secondAttempt && !flashingCurStage)
         {
+            solvedModules = Bomb.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
             if (moduleCount == 0 && !moduleSolved)
             {
                 moduleSolved = true;
@@ -114,12 +115,9 @@ public class SimonsStagesScript : MonoBehaviour
                 Debug.LogFormat("[Simon's Stages #{0}] There are no solveable modules on the bomb. Module disarmed.", moduleId);
                 StartCoroutine(SolveLights());
             }
-            else if (moduleCount != 1 && currentLevel < stagesToGenerate) // Replaced (solvedModules != moduleCount)
+            else if (moduleCount != 1 && solvedModules < stagesToGenerate + 1)  // Replaced (solvedModules != moduleCount)
             {
-                //tempSolvedModules = solvedModules;
-                solvedModules = Bomb.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-                //if (tempSolvedModules != solvedModules)
-                if (currentLevel < solvedModules)// Replaced (solvedModules != moduleCount)
+                if (currentLevel < solvedModules && solvedModules < moduleCount)// Replaced (solvedModules != moduleCount)
                 {
                     GenerateSequence();
                 }
