@@ -39,7 +39,7 @@ public class SimonsStagesScript : MonoBehaviour
 
     public int moduleCount = 0;
     public int solvedModules = 0;
-    private int tempSolvedModules = 0;
+    //private int tempSolvedModules = 0;
 
     public List<int> sequences = new List<int>();
     public List<string> solutionNames = new List<string>();
@@ -101,11 +101,13 @@ public class SimonsStagesScript : MonoBehaviour
             button.connectedButton.OnInteract += delegate () { ButtonPress(pressedButton); return false; };
         }
     }
-
+    bool flashingCurStage = false; // Currently used to allow the flashes to finish on each stage of Simon's Stages.
+    int stagesToGenerate = 0;
     void Update()
     {
-        if (!moduleLocked && !moduleSolved && gameOn && !readyToSolve && !secondAttempt)
+        if (!moduleLocked && !moduleSolved && gameOn && !readyToSolve && !secondAttempt && !flashingCurStage)
         {
+            solvedModules = Bomb.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
             if (moduleCount == 0 && !moduleSolved)
             {
                 moduleSolved = true;
@@ -113,16 +115,11 @@ public class SimonsStagesScript : MonoBehaviour
                 Debug.LogFormat("[Simon's Stages #{0}] There are no solveable modules on the bomb. Module disarmed.", moduleId);
                 StartCoroutine(SolveLights());
             }
-            else if (solvedModules != moduleCount)
+            else if (moduleCount != 1 && solvedModules < stagesToGenerate + 1)  // Replaced (solvedModules != moduleCount)
             {
-                tempSolvedModules = solvedModules;
-                solvedModules = Bomb.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-                if (tempSolvedModules != solvedModules)
+                if (currentLevel < solvedModules && solvedModules < moduleCount)// Replaced (solvedModules != moduleCount)
                 {
-                    if (solvedModules != moduleCount)
-                    {
-                        GenerateSequence();
-                    }
+                    GenerateSequence();
                 }
             }
             else
@@ -305,6 +302,7 @@ public class SimonsStagesScript : MonoBehaviour
 
     IEnumerator PlaySequence()
     {
+        flashingCurStage = true;
         yield return new WaitForSeconds(0.5f);
         bool first = true;
         foreach (LightInformation device in lightDevices)
@@ -349,6 +347,8 @@ public class SimonsStagesScript : MonoBehaviour
                 device.greyBase.enabled = true;
             }
             yield return new WaitForSeconds(3f);
+            flashingCurStage = false;
+            yield return new WaitForSeconds(0);
         }
     }
 
@@ -381,6 +381,7 @@ public class SimonsStagesScript : MonoBehaviour
     {
         absoluteLevelPosition.Add(0);
         moduleCount = Bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+        stagesToGenerate = moduleCount - 1;
         //moduleCount = 11;
         indicatorText.text = "";
         moduleLocked = true;
@@ -826,7 +827,8 @@ public class SimonsStagesScript : MonoBehaviour
             }
             moduleLocked = false;
             checking = false;
-            yield return new WaitForSeconds(5f);
+            for (int x = 0; x < 20 && secondAttemptLock; x++) // Instead of having to wait 5 full seconds, interrupt early if secondAttemptLock is no longer enabled.
+                yield return new WaitForSeconds(0.25f);
             if (secondAttemptLock)
             {
                 moduleLocked = true;
