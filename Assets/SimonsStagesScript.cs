@@ -78,6 +78,7 @@ public class SimonsStagesScript : MonoBehaviour
     private int stageIncreaser = 0;
     public List<bool> lightsSolved = new List<bool>();
     public List<bool> stagesSolved = new List<bool>();
+    private Coroutine pressCoroutine = null;
 
     //Logging
     static int moduleIdCounter = 1;
@@ -529,14 +530,22 @@ public class SimonsStagesScript : MonoBehaviour
             Debug.LogFormat("[Simon's Stages #{0}] Strike! The module is not yet ready to be solved.", moduleId);
             return;
         }
-        moduleLocked = true;
         if (secondAttemptLock)
         {
             secondAttemptLock = false;
         }
 
         Audio.PlaySoundAtTransform(device.connectedSound.name, transform);
-        StartCoroutine(PressFlash(device));
+        if (pressCoroutine != null)
+        {
+            StopCoroutine(pressCoroutine);
+            for (int i = 0; i <= 9; i++)
+            {
+                lightDevices[i].greyBase.enabled = true;
+                lightDevices[i].ledGlow.enabled = false;
+            }
+        }
+        pressCoroutine = StartCoroutine(PressFlash(device));
 
         if (device.colorName == solutionNames[totalPresses])
         {
@@ -843,7 +852,7 @@ public class SimonsStagesScript : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         device.greyBase.enabled = true;
         device.ledGlow.enabled = false;
-        moduleLocked = false;
+        pressCoroutine = null;
     }
 
     IEnumerator SolveLights()
