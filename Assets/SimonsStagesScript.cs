@@ -116,9 +116,9 @@ public class SimonsStagesScript : MonoBehaviour
                 Debug.LogFormat("[Simon's Stages #{0}] There are no solveable modules on the bomb. Module disarmed.", moduleId);
                 StartCoroutine(SolveLights());
             }
-            else if (moduleCount != 1 && solvedModules < stagesToGenerate + 1)  // Replaced (solvedModules != moduleCount)
+            else if (moduleCount != 1 && (solvedModules < moduleCount || currentLevel < stagesToGenerate)) // Replaced (solvedModules != moduleCount)
             {
-                if (currentLevel < solvedModules && solvedModules < moduleCount)// Replaced (solvedModules != moduleCount)
+                if (currentLevel < solvedModules) // Replaced (solvedModules != moduleCount)
                 {
                     GenerateSequence();
                 }
@@ -348,7 +348,8 @@ public class SimonsStagesScript : MonoBehaviour
                 device.greyBase.enabled = true;
             }
             yield return new WaitForSeconds(3f);
-            flashingCurStage = false;
+            if (current == currentLevel)
+                flashingCurStage = false;
             yield return new WaitForSeconds(0);
         }
     }

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: simonsStages
   title: Simon's Stages
-  description: "Simon\u2019s Stages 1.06\nSimon's angsty teenage years; in monochrome
+  description: "Simon\u2019s Stages 1.07\nSimon's angsty teenage years; in monochrome
     and causing as much pain as possible...\n\nModule ID: simonsStages\n\nCreated
     by: Royal_Flu$h\nBased on an idea by: Kusane\nSpecial thanks to: Riverbui\n\nManual
     available here: https://ktane.timwi.de/HTML/Simon%E2%80%99s%20Stages.html"
-  version: 1.06
+  version: 1.07
   outputFolder: build
   previewImage: {fileID: 2800000, guid: e0864f6f7751447a4b4f3b4f659c7ad6, type: 3}
